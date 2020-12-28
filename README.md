@@ -39,8 +39,12 @@ The `build.json` file needs to be filled out, the game versions can be found on 
 The manifest.json needs to be filled out as normal, however, the `"Version'` field should not be touched, it should be kept as `1.0.0-no-op`, this is so that Jenkins can replace it with the actual version in `build.json`.
 
 To use the CurseForge api, you need an API key, you can get one from [here](https://www.curseforge.com/account/api-tokens).
-Once you have a token, put it in the secrets.json file and add that secrets.json file as a secrets file credential on Jenkins, the credentials id should be called `mod_build_secrets`.
-
-Do not push your secrets.json file to Github!
+Once you have the token, make a new file called `secrets.json`, and put the following:
+```json
+{
+  "curseApiKey": ""
+}
+```
+Once you have the file, add it as a secrets file credential on Jenkins, the credentials id should be called `mod_build_secrets`.
 
 In the `Jenkinsfile`, change `modName` to be the name of your solution
