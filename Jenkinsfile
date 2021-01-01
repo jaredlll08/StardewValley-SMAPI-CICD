@@ -17,6 +17,15 @@ pipeline {
     }
 
     stages {
+        stage("Clean") {
+            steps {
+                script {
+                    println 'Cleaning build directory'
+                    sh(script: "rm -rf build/")
+                }
+
+            }
+        }
         stage("Preflight") {
             steps {
                 script {
@@ -47,19 +56,30 @@ pipeline {
                                 changelogType: "",
                                 displayName  : "",
                                 gameVersions : [],
-                                releaseType  : "",
-                                relations    : [
-                                        projects: []
-                                ]
+                                releaseType  : ""
                         ]
 
                         def buildConfig = readJSON file: "build.json"
+                        if (buildConfig.containsKey("relations") && buildConfig['relations'].size() > 0) {
+                            manifest = [
+                                    changelog    : "",
+                                    changelogType: "",
+                                    displayName  : "",
+                                    gameVersions : [],
+                                    releaseType  : "",
+                                    relations    : [
+                                            projects: []
+                                    ]
+                            ]
+                        }
                         def deploy = buildConfig["deploy"]
                         if (deploy) {
                             manifest["changelog"] = readFile(file: buildConfig["changelogFile"])
                             manifest['changelogType'] = buildConfig["changelogType"]
                             manifest["releaseType"] = buildConfig["releaseType"]
-                            manifest["relations"]["projects"] = buildConfig['relations']
+
+                            if (buildConfig.containsKey("relations") && buildConfig['relations'].size() > 0)
+                                manifest["relations"]["projects"] = buildConfig['relations']
 
                             def secrets = readJSON file: SECRET_FILE
                             def projectId = buildConfig["curseProjectId"];
@@ -76,13 +96,15 @@ pipeline {
                             }.collect {
                                 it.id
                             };
+                            println "Found curse versions: $curseVersions"
                             manifest.gameVersions = curseVersions;
                             final String fileName = sh(script: "ls build/", returnStdout: true).trim()
                             manifest["displayName"] = fileName
 
                             def json = JsonOutput.toJson(manifest)
-
+                            println "Uploading"
                             final String response = sh(script: "set +x && curl -s $url/api/projects/$projectId/upload-file -H 'X-Api-Token: $curseApiKey' -H 'content-type: multipart/form-data;' --form 'metadata=$json' --form 'file=@build/$fileName'", returnStdout: true).trim()
+                            println "Upload Complete"
                         } else {
                             println "Deploy disabled in build.json!"
                         }
