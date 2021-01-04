@@ -37,7 +37,14 @@ The `build.json` file needs to be filled out, the game versions can be found on 
 ```
 
 The manifest.json needs to be filled out as normal, however, the `"Version'` field should not be touched, it should be kept as `1.0.0-no-op`, this is so that Jenkins can replace it with the actual version in `build.json`.
+Also in the manifest is the UpdateKeys section, simply put your projectID in there. 
 
+The end result should look something like:
+```json
+  "UpdateKeys": [
+    "CurseForge:298033"
+  ]
+```
 To use the CurseForge api, you need an API key, you can get one from [here](https://www.curseforge.com/account/api-tokens).
 Once you have the token, make a new file called `secrets.json`, and put the following:
 ```json
@@ -48,3 +55,10 @@ Once you have the token, make a new file called `secrets.json`, and put the foll
 Once you have the file, add it as a secrets file credential on Jenkins, the credentials id should be called `mod_build_secrets`.
 
 In the `Jenkinsfile`, change `modName` to be the name of your solution
+
+
+# Caveats
+
+Github Template Repositories can only do so much, you will need to rename the solution and any references to `StardewValley-SMAPI-CICD` or `StardewValley_SMAPI_CICD` with your project's name.
+
+If anyone wants to write a simple script that will rename it for people, please make a PR, unfortunately my bash isn't that great and I don't want to introduce a compiled binary / requiring another language like Python or NodeJS to be installed just to rename some files.

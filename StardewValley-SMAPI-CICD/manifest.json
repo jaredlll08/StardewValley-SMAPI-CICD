@@ -6,5 +6,7 @@
   "UniqueID": "<your name>.<your project name>",
   "EntryDll": "<your project name>.dll",
   "MinimumApiVersion": "3.0.0",
-  "UpdateKeys": []
+  "UpdateKeys": [
+    "CurseForge:<your CurseForge projectId>"
+  ]
 }

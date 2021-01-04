@@ -1,5 +1,5 @@
 {
-  "curseProjectId": "",
+  "curseProjectId": "<your CurseForge projectId>",
   "version": "1.0.%build_number%",
   "gameVersions": [],
   "relations": [],
